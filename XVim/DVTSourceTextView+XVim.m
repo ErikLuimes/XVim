@@ -192,6 +192,7 @@ NSRect s_lastCaret;
 
 // Drawing Caret
 - (void)xvim__drawInsertionPointInRect:(NSRect)aRect color:(NSColor*)aColor{
+    return [self xvim__drawInsertionPointInRect:aRect color:aColor];
     // TRACE_LOG(@"%f %f %f %f", aRect.origin.x, aRect.origin.y, aRect.size.width, aRect.size.height);
     @try{
         XVimWindow* window = [self xvim_window];
@@ -219,6 +220,7 @@ NSRect s_lastCaret;
     }
 }
 - (void)xvim_drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag{
+    return [self xvim_drawInsertionPointInRect:rect color:color turnedOn:flag];
     XVimWindow* window = [self xvim_window];
     if( [[[window currentEvaluator] class] isSubclassOfClass:[XVimInsertEvaluator class]]){
         // Use original behavior when insert mode.
@@ -246,6 +248,7 @@ NSRect s_lastCaret;
         [self _drawInsertionPointInRect:rect color:color];
     }
 
+    
     return;
 }
 - (void)xvim_didChangeText{
