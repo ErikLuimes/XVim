@@ -203,7 +203,7 @@ NSRect s_lastCaret;
         NSRect glyphRect = [self xvim_boundingRectForGlyphIndex:glyphIndex];
         s_lastCaret = glyphRect;
 
-        [aColor set];
+        [[aColor colorWithAlphaComponent:0.5] set];
         NSRectFillUsingOperation( glyphRect, NSCompositeSourceOver);
         
     }@catch (NSException* exception) {
