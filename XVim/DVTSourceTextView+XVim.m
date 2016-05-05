@@ -151,7 +151,6 @@
 NSRect s_lastCaret;
 - (void)xvim_drawRect:(NSRect)dirtyRect{ 
     // TRACE_LOG(@"drawRect dirtyRect(%f,%f,%f,%f)", dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height);
-
     @try{
         if( XVim.instance.options.hlsearch ){
             XVimMotion* lastSearch = [XVim.instance.searcher motionForRepeatSearch];
@@ -165,7 +164,7 @@ NSRect s_lastCaret;
         }
         
         [self xvim_drawRect:dirtyRect];
-        
+
         if( self.selectionMode != XVIM_VISUAL_NONE ){
             // NSTextView does not draw insertion point when selecting text. We have to draw insertion point by ourselves.
             NSUInteger glyphIndex = [self insertionPoint];
@@ -192,7 +191,6 @@ NSRect s_lastCaret;
 
 // Drawing Caret
 - (void)xvim__drawInsertionPointInRect:(NSRect)aRect color:(NSColor*)aColor{
-    return [self xvim__drawInsertionPointInRect:aRect color:aColor];
     // TRACE_LOG(@"%f %f %f %f", aRect.origin.x, aRect.origin.y, aRect.size.width, aRect.size.height);
     @try{
         XVimWindow* window = [self xvim_window];
@@ -200,19 +198,13 @@ NSRect s_lastCaret;
             // Use original behavior when insert mode.
             return [self xvim__drawInsertionPointInRect:aRect color:aColor];
         }
-
-        // Erase old cursor.
-        [self xvim_drawRect:s_lastCaret];
         
         NSUInteger glyphIndex = [self insertionPoint];
         NSRect glyphRect = [self xvim_boundingRectForGlyphIndex:glyphIndex];
         s_lastCaret = glyphRect;
 
-        NSGraphicsContext *context = [NSGraphicsContext currentContext];
-        [context saveGraphicsState];
-        [[NSBezierPath bezierPathWithRect:[self visibleRect]] setClip];
-        [window drawInsertionPointInRect:glyphRect color:aColor];
-        [context restoreGraphicsState];
+        [aColor set];
+        NSRectFillUsingOperation( glyphRect, NSCompositeSourceOver);
         
     }@catch (NSException* exception) {
         ERROR_LOG(@"Exception %@: %@", [exception name], [exception reason]);
@@ -220,7 +212,6 @@ NSRect s_lastCaret;
     }
 }
 - (void)xvim_drawInsertionPointInRect:(NSRect)rect color:(NSColor *)color turnedOn:(BOOL)flag{
-    return [self xvim_drawInsertionPointInRect:rect color:color turnedOn:flag];
     XVimWindow* window = [self xvim_window];
     if( [[[window currentEvaluator] class] isSubclassOfClass:[XVimInsertEvaluator class]]){
         // Use original behavior when insert mode.
@@ -241,7 +232,8 @@ NSRect s_lastCaret;
     }
 
     if (shouldClear) {
-        [self xvim_drawRect:s_lastCaret];
+        // NOTICE: When [self:xvim_drawRect] is being called the 'Focus' feature of xcode hides the text in the editor window
+        // [self xvim_drawRect:s_lastCaret];
     }
 
     if (shouldDraw) {
